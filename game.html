@@ -1,50 +1,79 @@
 <html>
+    <head>
+        <title>Ping Pong Tennis Game</title>
+    </head>
+    <body>
+        <h1 style="border:2px solid dodgerblue">Tennis Game</h1>
+        <p style="font-size:200%;"></p>
     <canvas id="canvas">
     </canvas>
+    </body>
     <script>
         let canvas = document.getElementById("canvas");
         let context = canvas.getContext('2d');
-        let width = canvas.width = 800
-        let height = canvas.height = 600
+        let width = canvas.width = 800;
+        let height = canvas.height = 600;
         let ballX = 400;
         let ballY = 300;
         let ballSpeedX = 15;
         let ballSpeedY = 3;
         const FPS = 1000 / 35;
         let paddleWidth = 10;
-        let paddleHeight = 150;
-        let paddleY = 300;
-        let Paddley = 300;
-
-        function moveBall(){
-            if(ballX > width || ballX < 0){
-                ballSpeedX *= -1;
-            }
-
-            if(ballY > height || ballY < 0){
-                ballSpeedY *= -1;
-            }
-
-            ballY += ballSpeedY;
-            ballX += ballSpeedX;
-        
+        let paddleHeight = 100;
+        let paddle1Y = 250;
+        let paddle2Y = 250;
+        let paddle1X = 10;
+        let paddle2X = canvas.width - 10;
+        function ballReset(){
+            ballSpeedX = -ballSpeedX;
+            ballX = canvas.width/2;
+            ballY = canvas.height/2
         }
+        function moveBall(){
+            ballX = ballX + ballSpeedX;
+            ballY = ballY + ballSpeedY;
+        if(ballX < 0) {
+            if(ballY > paddle1Y && ballY < paddle1Y+paddleHeight){
+                ballSpeedX = -ballSpeedX;
+            } else{
+                ballReset();
+            }
+        }
+        
+        if(ballX > canvas.width) {
+            if(ballY > paddle2Y && ballY < paddle2Y+paddleHeight){
+                ballSpeedX = -ballSpeedX;
+            } else{
+                ballReset();
+            }
+        }
+        if(ballY < 0 || ballY > height){
+            ballSpeedY = -ballSpeedY;
+        }
+        }
+        
         function drawRect(startX, startY, width, height, color){
             context.fillStyle = color;
              context.fillRect(startX, startY, width, height);
         }
-        function updateALL(){
-            drawRect(0, 0, width, height, 'green');
-                drawRect(30, 0, 10, 600, 'yellow');
-                drawRect(760, 0, 10, 600, 'yellow');
-                drawRect(385, 0, 30, 600, 'white');
-                drawRect(0, 590, 800, 10, '#f8771b');
-                drawRect(0, 0, 800, 10, '#f8771b');
-                drawRect(30, paddleY, paddleWidth, paddleHeight, 'red');
-                //drawRect(760, Paddley, paddleWidth, paddleHeight, 'blue');
 
+        function computerMovement() {
+            let paddle2YCenter = paddle2Y + (paddleHeight/2);
+            if(paddle2YCenter < ballY - 35) {
+                paddle2Y = paddle2Y + 6;
+            } else if(paddle2YCenter > ballY + 35) {
+                paddle2Y = paddle2Y - 6; 
+            }
+        }
+        function updateALL(){
+            drawRect(0, 0, width, height, 'black');
+                drawRect(paddle1X, paddle1Y, paddleWidth, paddleHeight, 'red');
+                drawRect(paddle2X, paddle2Y, paddleWidth, paddleHeight, 'blue');
                 drawCircle(ballX, ballY, 10, '#e5ae0b');
                 moveBall();
+                computerMovement();
+                
+                
         }
 
         function drawCircle(centerX, centerY, radius, color){
@@ -57,7 +86,7 @@
         function calculateMousePosition(event){
             let rect = canvas.getBoundingClientRect(), root = document.documentElement;
             let mouseX = event.clientX - rect.left - root.scrollLeft;
-            let mouseY = event.clientY - rect.right - root.scrollTop;
+            let mouseY = event.clientY - rect.top - root.scrollTop;
             return {
                 x: mouseX,
                 y: mouseY
@@ -69,8 +98,7 @@
 
             canvas.addEventListener('mousemove', function(event){
                 let mousePosition = calculateMousePosition(event);
-                paddleY = mousePosition.y;
-                
+                paddle1Y = mousePosition.y - paddleHeight/2; 
             })
         }
     </script>
