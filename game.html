@@ -1,10 +1,9 @@
 <html>
     <head>
-        <title>Ping Pong Tennis Game</title>
+        <title>Tennis Game</title>
     </head>
     <body>
-        <h1 style="border:2px solid dodgerblue">Tennis Game</h1>
-        <p style="font-size:200%;"></p>
+        <h1>Tennis Game</h1>
     <canvas id="canvas">
     </canvas>
     </body>
@@ -24,17 +23,33 @@
         let paddle2Y = 250;
         let paddle1X = 10;
         let paddle2X = canvas.width - 10;
+        let playerScore = 0;
+        let computerScore = 0;
+
         function ballReset(){
-            ballSpeedX = -ballSpeedX;
+            if(ballX < 0){
+                computerScore++;
+            }else if(ballX > canvas.width){
+                playerScore++;
+            }
             ballX = canvas.width/2;
-            ballY = canvas.height/2
+            ballY = canvas.height/2;
+            ballSpeedX *= -1;   
+        console.log("Computer Score = " + computerScore + " Player Score = " + playerScore);
+
         }
+        
+        
         function moveBall(){
             ballX = ballX + ballSpeedX;
             ballY = ballY + ballSpeedY;
         if(ballX < 0) {
             if(ballY > paddle1Y && ballY < paddle1Y+paddleHeight){
                 ballSpeedX = -ballSpeedX;
+                var deltaY = ballY
+                    -(paddle1Y+paddleHeight/2);
+                    ballSpeedY = deltaY * 0.35;
+
             } else{
                 ballReset();
             }
@@ -43,6 +58,9 @@
         if(ballX > canvas.width) {
             if(ballY > paddle2Y && ballY < paddle2Y+paddleHeight){
                 ballSpeedX = -ballSpeedX;
+                var deltaY = ballY
+                    -(paddle1Y+paddleHeight/2);
+                    ballSpeedY = deltaY * 0.35;
             } else{
                 ballReset();
             }
@@ -65,11 +83,14 @@
                 paddle2Y = paddle2Y - 6; 
             }
         }
+
         function updateALL(){
             drawRect(0, 0, width, height, 'black');
                 drawRect(paddle1X, paddle1Y, paddleWidth, paddleHeight, 'red');
                 drawRect(paddle2X, paddle2Y, paddleWidth, paddleHeight, 'blue');
                 drawCircle(ballX, ballY, 10, '#e5ae0b');
+                context.fillText(computerScore, width -20, 20);
+                context.fillText(playerScore, width -790, 20);
                 moveBall();
                 computerMovement();
                 
