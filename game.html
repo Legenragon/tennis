@@ -25,8 +25,13 @@
         let paddle2X = canvas.width - 10;
         let playerScore = 0;
         let computerScore = 0;
+        const WINNING_SCORE = 5;
+        let showingWinScreen = false;
 
         function ballReset(){
+            if(playerScore >= WINNING_SCORE || computerScore >= WINNING_SCORE){
+                showingWinScreen = true;
+            }
             if(ballX < 0){
                 computerScore++;
             }else if(ballX > canvas.width){
@@ -34,7 +39,8 @@
             }
             ballX = canvas.width/2;
             ballY = canvas.height/2;
-            ballSpeedX *= -1;   
+            ballSpeedY = 2;
+            ballSpeedX = -ballSpeedX;
         console.log("Computer Score = " + computerScore + " Player Score = " + playerScore);
 
         }
@@ -86,6 +92,17 @@
 
         function updateALL(){
             drawRect(0, 0, width, height, 'black');
+            if(showingWinScreen) {
+                    context.fillStyle = "white";
+                if(playerScore >= WINNING_SCORE) {
+                    context.fillText("Left Player Won", 350, 200);
+                } else if(computerScore >= WINNING_SCORE) {
+                    context.fillText("Right Player Won", 350, 200);
+                }
+                context.fillText("click to continue", 350, 500);
+                return;
+            } else {
+            
                 drawRect(paddle1X, paddle1Y, paddleWidth, paddleHeight, 'red');
                 drawRect(paddle2X, paddle2Y, paddleWidth, paddleHeight, 'blue');
                 drawCircle(ballX, ballY, 10, '#e5ae0b');
@@ -93,7 +110,7 @@
                 context.fillText(playerScore, width -790, 20);
                 moveBall();
                 computerMovement();
-                
+                }
                 
         }
 
@@ -113,9 +130,17 @@
                 y: mouseY
             };
         }
+        function handleMouseClick(evt){
+            if(showingWinScreen) {
+                playerScore = 0;
+                computerScore = 0;
+                showingWinScreen = false;
+            }
+        }
         window.onload = function () {
             console.log(canvas);
             setInterval(function(){updateALL()}, FPS);
+            canvas.addEventListener('mousedown', handleMouseClick);
 
             canvas.addEventListener('mousemove', function(event){
                 let mousePosition = calculateMousePosition(event);
